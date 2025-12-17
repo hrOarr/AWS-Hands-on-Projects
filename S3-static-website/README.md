@@ -37,8 +37,9 @@ http://<bucket-name>.s3-website-<region>.amazonaws.com
 - No write or delete permissions for public users
 - ACLs disabled (bucket policy used)
 
-## 📸 Proof
+## 📸 Screenshots
 Screenshots are available under `docs/screenshots/`.
+![Website Running](docs/screenshots/website-working.png)
 
 ## 🧠 Learnings
 - Hosting static sites on S3
