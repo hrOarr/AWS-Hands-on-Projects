@@ -29,7 +29,7 @@ Port: 5432
 Inbound rule:
 
 ````
-PostgreSQL (5432) → 0.0.0.0/0 (everywhere)
+PostgreSQL (5432) → Public IP of My Machine
 ````
 This allows:
 - Connection from **DBeaver**
