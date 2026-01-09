@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Cloud Events App</title>
+    <style>
+        /* ===== General Page Styles ===== */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h2 {
+            color: #1f78d1;
+        }
+
+        hr {
+            border: none;
+            height: 1px;
+            background-color: #ddd;
+            margin: 30px 0;
+        }
+
+        /* ===== Form Styles ===== */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        button {
+            background-color: #1f78d1;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        button:hover {
+            background-color: #155a9c;
+        }
+
+        /* ===== Event List ===== */
+        ul#events {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        ul#events li {
+            background-color: #fff;
+            margin-bottom: 10px;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        ul#events li b {
+            margin-right: 10px;
+        }
+
+        ul#events li button {
+            background-color: #e74c3c;
+        }
+
+        ul#events li button:hover {
+            background-color: #c0392b;
+        }
+
+        /* ===== Container ===== */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 25px 30px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Create Event</h2>
+    <div class="form-group">
+        <input id="title" placeholder="Title" />
+    </div>
+    <div class="form-group">
+        <textarea id="description" placeholder="Description"></textarea>
+    </div>
+    <button onclick="createEventHandler()">Create</button>
+
+    <hr>
+
+    <h2>Events</h2>
+    <ul id="events"></ul>
+</div>
+
+<script>
+    const API_PATH = "/api/events"; 
+    
+    function loadEvents() {
+        fetch(API_PATH)
+            .then(res => res.json())
+            .then(data => {
+                const list = document.getElementById("events");
+                list.innerHTML = "";
+                data.forEach(e => {
+                    list.innerHTML += `
+                        <li>
+                            <div>
+                                <b>${e.title}</b> - ${e.description}
+                            </div>
+                            <button onclick="deleteEvent(${e.id})">Delete</button>
+                        </li>
+                    `;
+                });
+            })
+            .catch(err => console.error(err));
+    }
+
+    function createEventHandler() {
+        const title = document.getElementById("title").value.trim();
+        const description = document.getElementById("description").value.trim();
+
+        if (!title || !description) {
+            alert("Please enter both title and description");
+            return;
+        }
+
+        fetch(API_PATH, {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ title, description })
+        }).then(() => {
+            document.getElementById("title").value = "";
+            document.getElementById("description").value = "";
+            loadEvents();
+        }).catch(err => console.error(err));
+    }
+
+    function deleteEvent(id) {
+        fetch(`${API_PATH}/${id}`, { method: "DELETE" })
+            .then(loadEvents)
+            .catch(err => console.error(err));
+    }
+
+    loadEvents();
+</script>
+
+</body>
+</html>
